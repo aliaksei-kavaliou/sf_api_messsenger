@@ -10,4 +10,4 @@ framework:
             sqs: 'enqueue://sqs?receiveTimeout=1000&queue[name]=%env(resolve:MESSENGER_SQS_QUEUE)%&topic[name]=%env(resolve:MESSENGER_SQS_QUEUE)%'
 
         routing:
-#            'App\MessageInterface': sqs
+            'App\Messenger\MessageInterface': sqs

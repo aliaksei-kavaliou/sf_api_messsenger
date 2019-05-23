@@ -5,7 +5,7 @@ services:
   db:
     image: mysql:8
     networks:
-      backend:
+      - backend
     environment:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=app_db
@@ -16,24 +16,30 @@ services:
     ports:
       - "3307:3306"
 
-  app:
+  php:
     build:
       context: ./
-      dockerfile: build/docker/Dockerfile
+      dockerfile: docker/Dockerfile
     env_file:
       - .env
+    volumes:
+    - ./:/var/www/html
     depends_on:
-      - db
+     - db
+    networks:
+     - backend
+
+  web:
+    image: nginx:latest
+    ports:
+    - "8888:80"
+    volumes:
+    - ./:/var/www/html
+    - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+    - php
     networks:
       - backend
-    volumes:
-      - ./:/var/www/html
-      - ~/tmp:/tmp
-    links:
-      - db
-    ports:
-      - "8084:80"
-      - "9009:9000"
 
   localstack:
     image: localstack/localstack:latest
