@@ -1,0 +1,56 @@
+version: '3.4'
+
+services:
+
+  db:
+    image: mysql:8
+    networks:
+      backend:
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=app_db
+      - MYSQL_PASSWORD=password
+      - MYSQL_USER=app_user
+    volumes:
+      - "mysqlvol:/var/lib/mysql"
+    ports:
+      - "3307:3306"
+
+  app:
+    build:
+      context: ./
+      dockerfile: build/docker/Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - backend
+    volumes:
+      - ./:/var/www/html
+      - ~/tmp:/tmp
+    links:
+      - db
+    ports:
+      - "8084:80"
+      - "9009:9000"
+
+  localstack:
+    image: localstack/localstack:latest
+    networks:
+      - backend
+    ports:
+      - '4567-4584:4567-4584'
+      - '8080:8080'
+    volumes:
+      - ~/tmp:/tmp
+    environment:
+      SERVICES: "sqs"
+      DATA_DIR: '/tmp/localstack/data'
+      HOSTNAME_EXTERNAL: localstack
+
+networks:
+  backend:
+
+volumes:
+  mysqlvol:
