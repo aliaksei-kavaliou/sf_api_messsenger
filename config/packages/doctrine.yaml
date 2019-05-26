@@ -16,6 +16,9 @@ doctrine:
             collate: utf8mb4_unicode_ci
 
         url: '%env(resolve:DATABASE_URL)%'
+        types:
+            transaction_status_type: App\DBAL\Types\TransactionStatusType
+            currency_type: App\DBAL\Types\CurrencyType
     orm:
         auto_generate_proxy_classes: true
         naming_strategy: doctrine.orm.naming_strategy.underscore

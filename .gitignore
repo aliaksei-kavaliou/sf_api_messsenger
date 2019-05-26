@@ -9,3 +9,7 @@
 ###< symfony/framework-bundle ###
 .idea
 .DS_Store
+###> symfony/phpunit-bridge ###
+.phpunit
+/phpunit.xml
+###< symfony/phpunit-bridge ###

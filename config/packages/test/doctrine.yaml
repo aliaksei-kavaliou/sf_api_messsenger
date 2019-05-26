@@ -1,0 +1,9 @@
+doctrine:
+    dbal:
+        url: 'sqlite:///%kernel.project_dir%/var/app.db?charset=UTF-8'
+
+    orm:
+        auto_mapping: true
+        default_entity_manager: default
+        auto_generate_proxy_classes: "%kernel.debug%"
+        naming_strategy: doctrine.orm.naming_strategy.underscore

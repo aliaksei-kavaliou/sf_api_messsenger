@@ -6,6 +6,7 @@ framework:
             messenger.bus.default:
                 middleware:
                     - 'messenger.middleware.validation'
+                    - 'App\Messenger\Middleware\TransactionAllowedMiddleware'
         transports:
             sqs: 'enqueue://sqs?receiveTimeout=1000&queue[name]=%env(resolve:MESSENGER_SQS_QUEUE)%&topic[name]=%env(resolve:MESSENGER_SQS_QUEUE)%'
 

@@ -14,6 +14,11 @@ services:
 
         bind:
             $kernelEnvironment: '%kernel.environment%'
+            $feePercentage: '%env(resolve:FEE_PERCENTAGE)%'
+            $feePercentageLight: '%env(resolve:FEE_PERCENTAGE_LIGHT)%'
+            $feeLightMin: '%env(resolve:FEE_LIGHT_MIN)%'
+            $transactionHourLimit: '%env(resolve:TRANSACTION_HOUR_LIMIT)%'
+            $transactionDayLimit: '%env(resolve:TRANSACTION_DAY_LIMIT)%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -26,6 +31,10 @@ services:
     App\Controller\:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
+
+    App\Messenger\Handler\:
+        resource: '../src/Messenger/Handler'
+        tags: [messenger.message_handler]
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
@@ -41,3 +50,8 @@ services:
 
     sensio_framework_extra.view.listener:
         alias: Sensio\Bundle\FrameworkExtraBundle\EventListener\TemplateListener
+
+    command.converter:
+        class: App\Service\CommandParamConverter
+        tags:
+        - { name: request.param_converter, converter: command_param_converter }
