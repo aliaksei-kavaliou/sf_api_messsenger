@@ -36,6 +36,9 @@ class PostTransactionHandler implements MessageHandlerInterface
 
     /**
      * @param PostTransaction $message
+     *
+     * @return int
+     * @throws \ReflectionException
      */
     public function __invoke(PostTransaction $message)
     {
@@ -54,5 +57,7 @@ class PostTransactionHandler implements MessageHandlerInterface
 
         $em->persist($transaction);
         $em->flush();
+
+        return $transaction->getId();
     }
 }

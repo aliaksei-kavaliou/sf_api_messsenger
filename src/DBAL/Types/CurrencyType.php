@@ -42,7 +42,7 @@ class CurrencyType extends Type
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform): ?string
     {
-        if ($value instanceof StatusEnum) {
+        if ($value instanceof CurrencyEnum) {
             $value = $value->getValue();
         }
 
@@ -55,5 +55,15 @@ class CurrencyType extends Type
     public function getName(): string
     {
         return self::NAME;
+    }
+
+    /**
+     * @param AbstractPlatform $platform
+     *
+     * @return bool
+     */
+    public function requiresSQLCommentHint(AbstractPlatform $platform)
+    {
+        return true;
     }
 }

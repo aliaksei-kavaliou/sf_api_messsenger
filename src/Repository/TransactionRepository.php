@@ -3,21 +3,21 @@
 namespace App\Repository;
 
 use App\Enum\CurrencyEnum;
-use App\Enum\TransactionStatusEnum;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use App\Entity\Transaction;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
- * @method Accessor|null find($id, $lockMode = null, $lockVersion = null)
- * @method Accessor|null findOneBy(array $criteria, array $orderBy = null)
- * @method Accessor[]    findAll()
- * @method Accessor[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Transaction|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Transaction|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Transaction[]    findAll()
+ * @method Transaction[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class TransactionRepository extends ServiceEntityRepository
 {
     public function __construct(RegistryInterface $registry)
     {
-        parent::__construct($registry, Accessor::class);
+        parent::__construct($registry, Transaction::class);
     }
 
     /**
@@ -25,13 +25,14 @@ class TransactionRepository extends ServiceEntityRepository
      * @param int $limit
      *
      * @return bool
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function hourLimitExceeded(int $userId, int $limit): bool
     {
-        $qb = $this->createQueryBuilder()
-            ->select('count(id)')
-                   ->andWhere('userId = :user_id')
-                   ->andWhere('created >= :date')
+        $qb = $this->createQueryBuilder('t')
+            ->select('count(t.id)')
+                   ->andWhere('t.userId = :user_id')
+                   ->andWhere('t.created >= :date')
                    ->setParameters(
                        [
                            'user_id' => $userId,
@@ -39,7 +40,7 @@ class TransactionRepository extends ServiceEntityRepository
                        ]
                    );
 
-       return $limit < $qb->getQuery()->getScalarResult();
+       return $limit < (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -48,14 +49,15 @@ class TransactionRepository extends ServiceEntityRepository
      * @param CurrencyEnum $currency
      *
      * @return bool
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function dailyLimitExceeded(int $userId, int $limit, CurrencyEnum $currency): bool
     {
-        $qb = $this->createQueryBuilder()
-            ->select('sum(amount) + sum(fee)')
-            ->where('userId = :user_id')
-            ->andWhere('created >= :date')
-            ->andWhere('currency = :currency')
+        $qb = $this->createQueryBuilder('t')
+            ->select('sum(t.amount) + sum(t.fee)')
+            ->where('t.userId = :user_id')
+            ->andWhere('t.created >= :date')
+            ->andWhere('t.currency = :currency')
             ->setParameters(
                 [
                     'user_id' => $userId,
@@ -64,20 +66,21 @@ class TransactionRepository extends ServiceEntityRepository
                 ]
             );
 
-        return $limit <= $qb->getQuery()->getScalarResult();
+        return $limit <= (int) $qb->getQuery()->getSingleScalarResult();
     }
 
     /**
      * @param int $userId
      *
      * @return int
+     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function countDailyTransactions(int $userId): int
     {
-        $qb = $this->createQueryBuilder()
-                   ->select('count(id)')
-                   ->andWhere('userId = :user_id')
-                   ->andWhere('created >= :date')
+        $qb = $this->createQueryBuilder('t')
+                   ->select('count(t.id)')
+                   ->andWhere('t.userId = :user_id')
+                   ->andWhere('t.created >= :date')
                    ->setParameters(
                        [
                            'user_id' => $userId,
@@ -85,6 +88,6 @@ class TransactionRepository extends ServiceEntityRepository
                        ]
                    );
 
-        return $qb->getQuery()->getScalarResult();
+        return (int) $qb->getQuery()->getSingleScalarResult();
     }
 }

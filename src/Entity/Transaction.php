@@ -2,11 +2,12 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use App\Enum\TransactionStatusEnum;
 use App\Enum\CurrencyEnum;
+use App\Enum\TransactionStatusEnum;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * @ORM\Table("transaction_")
  * @ORM\Entity(repositoryClass="App\Repository\TransactionRepository")
  */
 class Transaction
@@ -14,6 +15,7 @@ class Transaction
     /**
      * @var int
      * @ORM\Id()
+     * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\Column(type="integer")
      */
     private $id;

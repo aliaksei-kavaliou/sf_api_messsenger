@@ -2,7 +2,9 @@
 
 namespace App\Messenger\Middleware;
 
-class TransactionAllowedStamp
+use Symfony\Component\Messenger\Stamp\StampInterface;
+
+class TransactionAllowedStamp implements StampInterface
 {
     /**
      * @var int

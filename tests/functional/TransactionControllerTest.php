@@ -23,7 +23,7 @@ class TransactionControllerTest extends WebTestCase
                 "receiver_account": "12345",
                 "receiver_name": "Name Surname",
                 "amount": 20.00,
-                "currency": "eur"
+                "currency": "EUR"
             }'
         );
 
